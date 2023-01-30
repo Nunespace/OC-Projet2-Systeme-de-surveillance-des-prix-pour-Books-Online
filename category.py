@@ -43,7 +43,6 @@ while url_category_page_next (url)!= None:
 
 soup=recuperation_code_page(url_category_page1)
 category_old=soup.find('h1').text
-category = category_old(' ', '_')
+category = category_old.replace (' ', '_')
 file_category =category+"2023_jan.csv"
-print (type(file_category))
 creation_csv_file(file_category, list_info_category)
