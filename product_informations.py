@@ -1,11 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import csv
-
+import datetime
+import os
 
 url_site= "http://books.toscrape.com"
 
-url_product = "http://books.toscrape.com/catalogue/the-art-of-not-breathing_58/index.html" # lien de la page du produit à scrapper
+url_product = "http://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html" # lien de la page du produit à scrapper
 
 
 def recuperation_code_page(url):
@@ -77,6 +78,19 @@ def recuperation_infos_livre (url):
         dico['number_available'] = liste_info[5]
         return dico
 
+    def load_image(image_url):
+        category=dico['category']
+        dir=category.replace(' ', '_').replace('/','_')
+        if not os.path.exists(dir):
+            os.mkdir(dir)
+        recup_titre_livre(soup_product)
+        image_name= dir+'/'+extraction_head_title (url)+".jpg"
+        f = open(image_name, 'wb')  # écriture format b inaire
+        response = requests.get(image_url)
+        f.write(response.content)
+        f.close()
+
+
     soup_product=recuperation_code_page (url)
     dico={'product_page_url':url, 'universal_product_code(upc)':'', 'title' :'', 'price_excluding_tax' : '', 'price_including_tax': '', 'number_available':'', 'product_description' : '', 'category':'', 'review_rating' : '', 'image_url':''}
     dico=product_information(dico)
@@ -85,6 +99,8 @@ def recuperation_infos_livre (url):
     dico['category']=recuperation_categorie (soup_product)
     dico['review_rating']=review_rating_extraction(soup_product)
     dico['image_url']=recuperation_url_image(url_site, soup_product)
+    image_url = dico['image_url']
+    load_image(image_url)
     return dico
 
 # fonction pour charger les données dans un fichier csv à partir d'une liste de dictionnaires
@@ -101,9 +117,27 @@ def creation_csv_file(file, dict_list):
                 list_info.append(infos_book[key])
             writer.writerow(list_info)
 
-dict_one_book = [recuperation_infos_livre (url_product)]
-file_book ='book_informations_2023_jan.csv'
-creation_csv_file(file_book, dict_one_book)
+
+#fonction qui récupère le titre de la page : book ou category
+def extraction_head_title (url):
+    soup = recuperation_code_page(url)
+    head_title_old = soup.find('h1').text
+    head_title= head_title_old.replace(' ', '_').replace('/','_')
+    return head_title
+
+
+def load_file_one_book (url):
+    dict_one_book = [recuperation_infos_livre (url_product)]
+    date=str (datetime.date.today())
+    today=date.replace('-', '_')
+    file_book = extraction_head_title (url_product) + "_"+today +".csv"
+    creation_csv_file(file_book, dict_one_book)
+
+load_file_one_book(url_product)
+
+
+
+
 
 
 
