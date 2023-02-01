@@ -1,0 +1,11 @@
+# tous les fichiers csv et jpg générés par l'exécution de l'application
+*.jpg
+*.csv
+
+# dossier IDE (Pycharm)
+/__pycache__
+/.idea
+
+#environnement virtuel
+/env
+
