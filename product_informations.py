@@ -4,104 +4,97 @@ import csv
 import datetime
 import os
 
-url_site= "http://books.toscrape.com"
+url_site = "http://books.toscrape.com"
 
-url_product = "http://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html" # lien de la page du produit à scrapper
+url_product = "http://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html"  # lien de la page du produit à scrapper
 
+nb = 0
 
-def recuperation_code_page(url):
-    reponse = requests.get(url)
+def extraction_code_page(url):
+    response = requests.get(url)
     # transforme (parse) le HTML en objet BeautifulSoup. text est ajouté pour avoir le texte et non le code 200
-    soup = BeautifulSoup(reponse.content, "html.parser")
-    if reponse.ok:  # cad si requests.get renvoie le code 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    if response.ok:  # cad si requests.get renvoie le code 200
         return soup
 
 
-def recuperation_infos_livre (url):
+def extraction_book_info(url):
+    global nb
+    def extraction_book_title(soup):
+        div_title = soup.find('div', class_='col-sm-6 product_main')
+        title = div_title.find('h1')
+        return title
 
-    def recup_titre_livre(soup_product):
-        div_titre=soup_product.find('div', class_='col-sm-6 product_main')
-        for h1 in div_titre:
-            titre=soup_product.find('h1').text
-        return titre
+    def extraction_url_image(url, soup):
+        div_image = soup.find('div', class_='item active')
+        link_image = div_image.find('img')
+        source = link_image['src']
+        src = source[5:]
+        return url + src
 
-
-    def recuperation_url_image(url_site, soup_product):
-        div_image=soup_product.find('div', class_='item active')
-        lien_image=div_image.find('img')
-        source=lien_image['src']
-        src= source[5:]
-        return url_site + src
-
-    def recuperation_description_produit (soup_product):
-        description=soup_product.findAll('p')
+    def extraction_product_description(soup):
+        description = soup.findAll('p')
         return description[3].string
 
-    def recuperation_categorie (soup_product):
-        categorie1=soup_product.findAll('li')
-        categorie1=str(categorie1[2].text)
-        categorie=categorie1.strip() #supprime les blancs au début et à la fin de la catégorie
-        return categorie
+    def extraction_category(soup):
+        category1 = soup.findAll('li')
+        category1 = str(category1[2].text)
+        category = category1.strip()  # supprime les blancs au début et à la fin de la catégorie
+        return category
      
-    def review_rating_extraction(soup_product):#Returns review_rating from soup_product
-        review_rating_string_int_correspondance = {
-        "One" : 1,
-        "Two" : 2,
-        "Three" : 3,
-        "Four" : 4,
-        "Five": 5
-        }
+    def review_rating_extraction(soup):
+        review_rating_string_int_correspondance = {"One": 1, "Two": 2, "Three": 3, "Four": 4, "Five": 5}
         paragraphs_attributes = []
-        paragraphs = soup_product.findAll('p')
+        paragraphs = soup.findAll('p')
         for paragraph in paragraphs:
             paragraphs_attributes.append(paragraph.attrs)
-        review_rating_string = paragraphs_attributes[2]['class'][1] # le 3è paragraphe contient la note du livre (les autres en bas de page indiquent la note des livres déjà visités)
+        review_rating_string = paragraphs_attributes[2]['class'][1]  # le 3è paragraphe contient la note du livre (les autres en bas de page indiquent la note des livres déjà visités)
         review_rating = review_rating_string_int_correspondance[review_rating_string]
         return review_rating  
 
-       
-
-    def product_information (dico):
-        liste_info=[]
-        tds=soup_product.findAll('td')
-        [liste_info.append(td.text) for td in tds]
-        prix_ht=liste_info[2].replace('Â','') #remplacement du A devant le prix
-        liste_info[2]=prix_ht
-        price_including_tax=liste_info[3].replace('Â','')
-        liste_info[3]=price_including_tax
-        number_available = liste_info[5]  # récupération uniquement du nombre dans "number available"
+    def product_information(soup):
+        list_product_info = []
+        tds = soup.findAll('td')
+        [list_product_info.append(td.text) for td in tds]
+        prix_ht = list_product_info[2].replace('Â', '')  # remplacement du A devant le prix
+        list_product_info[2] = prix_ht
+        price_including_tax = list_product_info[3].replace('Â', '')
+        list_product_info[3] = price_including_tax
+        number_available = list_product_info[5]  # récupération uniquement du nombre dans "number available"
         number_available = "".join([i for i in number_available if not i.isalpha() and i.isalnum()])
-        liste_info[5] = int(number_available)
-        dico['universal_product_code(upc)'] = liste_info[0]
-        dico['price_excluding_tax'] = liste_info[2]
-        dico['price_including_tax'] = liste_info[3]
-        dico['number_available'] = liste_info[5]
-        return dico
+        list_product_info[5] = int(number_available)
+        return list_product_info
 
-    def load_image(image_url):
-        category=dico['category']
-        dir=category.replace(' ', '_').replace('/','_')
-        if not os.path.exists(dir):
-            os.mkdir(dir)
-        recup_titre_livre(soup_product)
-        image_name= dir+'/'+extraction_head_title (url)+".jpg"
+    def load_image(url_image):
+        category = dict_info['category']
+        directory = category.replace(' ', '_').replace('/', '_')
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+        extraction_book_title(soup_product)
+        image_name = directory+'/'+extraction_head_title(url)+".jpg"
         f = open(image_name, 'wb')  # écriture format b inaire
-        response = requests.get(image_url)
+        response = requests.get(url_image)
         f.write(response.content)
         f.close()
 
-
-    soup_product=recuperation_code_page (url)
-    dico={'product_page_url':url, 'universal_product_code(upc)':'', 'title' :'', 'price_excluding_tax' : '', 'price_including_tax': '', 'number_available':'', 'product_description' : '', 'category':'', 'review_rating' : '', 'image_url':''}
-    dico=product_information(dico)
-    dico['title']=recup_titre_livre(soup_product)
-    dico['product_description']=recuperation_description_produit (soup_product)
-    dico['category']=recuperation_categorie (soup_product)
-    dico['review_rating']=review_rating_extraction(soup_product)
-    dico['image_url']=recuperation_url_image(url_site, soup_product)
-    image_url = dico['image_url']
+    soup_product = extraction_code_page(url)
+    dict_info = {'product_page_url': url, 'universal_product_code(upc)': '', 'title': '', 'price_excluding_tax': '', 'price_including_tax': '', 'number_available': '', 'product_description': '', 'category': '', 'review_rating': '', 'image_url': ''}
+    list_info = product_information(soup_product)
+    dict_info['title'] = extraction_book_title(soup_product)
+    dict_info['product_description'] = extraction_product_description(soup_product)
+    dict_info['category'] = extraction_category(soup_product)
+    dict_info['review_rating'] = review_rating_extraction(soup_product)
+    dict_info['image_url'] = extraction_url_image(url_site, soup_product)
+    dict_info['universal_product_code(upc)'] = list_info[0]
+    dict_info['price_excluding_tax'] = list_info[2]
+    dict_info['price_including_tax'] = list_info[3]
+    dict_info['number_available'] = list_info[5]
+    image_url = dict_info['image_url']
+    nb+=1
+    print (nb, "/1000")
     load_image(image_url)
-    return dico
+    return dict_info
+
 
 # fonction pour charger les données dans un fichier csv à partir d'une liste de dictionnaires
 def creation_csv_file(file, dict_list):
@@ -111,48 +104,27 @@ def creation_csv_file(file, dict_list):
         for key in dict_list[0]:
             headers.append(key)
         writer.writerow(headers)
-        for infos_book in dict_list :
+        for infos_book in dict_list:
             list_info = []
             for key in infos_book:
                 list_info.append(infos_book[key])
             writer.writerow(list_info)
 
 
-#fonction qui récupère le titre de la page : book ou category
-def extraction_head_title (url):
-    soup = recuperation_code_page(url)
+# fonction qui récupère le titre de la page : book ou category
+def extraction_head_title(url):
+    soup = extraction_code_page(url)
     head_title_old = soup.find('h1').text
-    head_title= head_title_old.replace(' ', '_').replace('/','_')
+    head_title = head_title_old.replace(' ', '_').replace('/', '_')
     return head_title
 
 
-def load_file_one_book (url):
-    dict_one_book = [recuperation_infos_livre (url_product)]
-    date=str (datetime.date.today())
-    today=date.replace('-', '_')
-    file_book = extraction_head_title (url_product) + "_"+today +".csv"
+def load_file_one_book(url):
+    dict_one_book = [extraction_book_info(url)]
+    date = str(datetime.date.today())
+    today = date.replace('-', '_')
+    file_book = extraction_head_title(url) + "_" + today + ".csv"
     creation_csv_file(file_book, dict_one_book)
 
+
 load_file_one_book(url_product)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
