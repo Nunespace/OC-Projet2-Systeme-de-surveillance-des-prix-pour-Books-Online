@@ -47,7 +47,7 @@ def load_file_category(url):
     date = str(datetime.date.today())
     today = date.replace('-', '_')
     directory + '/' + extraction_head_title(url) + ".jpg"
-    file_category = directory + '/' + "category_" + extraction_head_title(url) + "_"+today+".csv"
+    file_category = directory + '/' + "category_" + extraction_head_title(url) + "_" + today + ".csv"
     list_info_one_category = extraction_info_category(url)
     creation_csv_file(file_category, list_info_one_category)
 

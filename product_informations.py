@@ -114,8 +114,9 @@ def creation_csv_file(file, dict_list):
 # fonction qui récupère le titre de la page : book ou category
 def extraction_head_title(url):
     soup = extraction_code_page(url)
-    head_title_old = soup.find('h1').text
-    head_title = head_title_old.replace(' ', '_').replace('/', '_')
+    head_title_raw = soup.find('h1').text
+    head_title_cleaned = "".join([i for i in head_title_raw if i.isalpha() or i.isalnum() or i == ' '])
+    head_title = head_title_cleaned.replace(' ', '_')
     return head_title
 
 
@@ -128,3 +129,6 @@ def load_file_one_book(url):
 
 
 load_file_one_book(url_product)
+
+
+
