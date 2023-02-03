@@ -1,6 +1,6 @@
 from product_informations import *
 
-url_category_page1 = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
+url_category_page1 = "http://books.toscrape.com/catalogue/category/books/science-fiction_16/index.html"
 
 
 def extraction_info_category(url):
@@ -43,7 +43,9 @@ def extraction_info_category(url):
 
 
 def load_file_category(url):
-    directory = extraction_head_title(url)
+    category = extraction_head_title(url)
+    directory = 'categories/' + category
+    os.makedirs(directory, exist_ok=True)
     date = str(datetime.date.today())
     today = date.replace('-', '_')
     directory + '/' + extraction_head_title(url) + ".jpg"
@@ -51,5 +53,5 @@ def load_file_category(url):
     list_info_one_category = extraction_info_category(url)
     creation_csv_file(file_category, list_info_one_category)
 
-
+# pour créer un dossier pour une seule catégorie, exécuter cette fonction:
 load_file_category(url_category_page1)

@@ -67,9 +67,9 @@ def extraction_book_info(url):
 
     def load_image(url_image):
         category = dict_info['category']
-        directory = category.replace(' ', '_').replace('/', '_')
-        if not os.path.exists(directory):
-            os.mkdir(directory)
+        category_new = category.replace(' ', '_').replace('/', '_')
+        directory = 'categories/' + category_new + '/images'
+        os.makedirs(directory, exist_ok=True)
         extraction_book_title(soup_product)
         image_name = directory+'/'+extraction_head_title(url)+".jpg"
         f = open(image_name, 'wb')  # écriture format b inaire
@@ -127,8 +127,9 @@ def load_file_one_book(url):
     file_book = extraction_head_title(url) + "_" + today + ".csv"
     creation_csv_file(file_book, dict_one_book)
 
-
+# pour créer un fichier .csv pour un seul livre, executer cette fonction:
 load_file_one_book(url_product)
+
 
 
 
