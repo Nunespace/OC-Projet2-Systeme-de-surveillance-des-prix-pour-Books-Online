@@ -6,10 +6,13 @@ import os
 
 url_site = "http://books.toscrape.com"
 
+# example d'un url d'une page décrivant un livre
 url_product = "http://books.toscrape.com/catalogue/red-hoodarsenal-vol-1-open-for-business-red-hoodarsenal-1_729/index.html"  # lien de la page du produit à scrapper
 
+# initialisation d'une variable pour compter les livres lors du scrapping
 nb = 0
 
+#  fonction pour récupérer (parser) le code HTML d'une page web
 def extraction_code_page(url):
     response = requests.get(url)
     # transforme (parse) le HTML en objet BeautifulSoup. text est ajouté pour avoir le texte et non le code 200
@@ -17,8 +20,9 @@ def extraction_code_page(url):
     if response.ok:  # cad si requests.get renvoie le code 200
         return soup
 
-
+# Cette fonction récupère toutes les informations d'un livre
 def extraction_book_info(url):
+
     global nb
 
     def extraction_book_title(soup):
@@ -53,6 +57,7 @@ def extraction_book_info(url):
         review_rating = review_rating_string_int_correspondance[review_rating_string]
         return review_rating  
 
+# Ici, les informations du tableau "Product description" du bas de la page sont extraites
     def product_information(soup):
         list_product_info = []
         tds = soup.findAll('td')
@@ -90,8 +95,8 @@ def extraction_book_info(url):
     dict_info['price_including_tax'] = list_info[3]
     dict_info['number_available'] = list_info[5]
     image_url = dict_info['image_url']
-    nb+=1
-    print (nb, "/1000")
+    nb += 1
+    print(nb, "/1000 books")
     load_image(image_url)
     return dict_info
 
@@ -119,17 +124,12 @@ def extraction_head_title(url):
     head_title = head_title_cleaned.replace(' ', '_')
     return head_title
 
-
+# fonction qui sert à créer un fichier .csv pour un seul livre
 def load_file_one_book(url):
     dict_one_book = [extraction_book_info(url)]
     date = str(datetime.date.today())
     today = date.replace('-', '_')
     file_book = extraction_head_title(url) + "_" + today + ".csv"
     creation_csv_file(file_book, dict_one_book)
-
-# pour créer un fichier .csv pour un seul livre, executer cette fonction:
-load_file_one_book(url_product)
-
-
-
-
+#  pour exécuter la fonction : retirer le # la ligne suivante
+# load_file_one_book(url_product)
