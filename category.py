@@ -54,4 +54,4 @@ def load_file_category(url):
     creation_csv_file(file_category, list_info_one_category)
 
 # pour créer un dossier pour une seule catégorie, exécuter cette fonction:
-load_file_category(url_category_page1)
+#load_file_category(url_category_page1)

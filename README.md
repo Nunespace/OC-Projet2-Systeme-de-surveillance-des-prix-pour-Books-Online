@@ -64,7 +64,11 @@ $ CD chemin .../Projet2
 
 ```
 python3 -m venv env 
+```
+
 ou[^1]
+
+```
 python -m venv env 
 ```
 
@@ -93,5 +97,6 @@ $ python3 all_products.py
 ou
 $ python all_products.py
 ```
+Pour lire les fichiers .csv avec Excel, il est conseillé de les ouvrir via l'onglet _Données_ en cliquant sur _A partir d'un fichier texte/CSV_
 
 [^1]: selon la version de Python installée sur votre PC.

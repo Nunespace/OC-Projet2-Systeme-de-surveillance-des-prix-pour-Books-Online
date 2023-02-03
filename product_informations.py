@@ -20,10 +20,11 @@ def extraction_code_page(url):
 
 def extraction_book_info(url):
     global nb
+
     def extraction_book_title(soup):
         div_title = soup.find('div', class_='col-sm-6 product_main')
         title = div_title.find('h1')
-        return title
+        return title.text
 
     def extraction_url_image(url, soup):
         div_image = soup.find('div', class_='item active')
@@ -70,7 +71,6 @@ def extraction_book_info(url):
         category_new = category.replace(' ', '_').replace('/', '_')
         directory = 'categories/' + category_new + '/images'
         os.makedirs(directory, exist_ok=True)
-        extraction_book_title(soup_product)
         image_name = directory+'/'+extraction_head_title(url)+".jpg"
         f = open(image_name, 'wb')  # écriture format b inaire
         response = requests.get(url_image)
