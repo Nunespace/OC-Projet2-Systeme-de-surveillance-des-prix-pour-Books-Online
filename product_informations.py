@@ -132,4 +132,4 @@ def load_file_one_book(url):
     file_book = extraction_head_title(url) + "_" + today + ".csv"
     creation_csv_file(file_book, dict_one_book)
 #  pour exécuter la fonction : retirer le # la ligne suivante
-# load_file_one_book(url_product)
+load_file_one_book(url_product)
