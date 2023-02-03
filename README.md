@@ -1,6 +1,7 @@
 # Système de surveillance des prix pour Books Online
-_Système de surveillance des prix limité à un seul revendeur en ligne : Books to Scrape_
 ***
+_Système de surveillance des prix limité à un seul revendeur en ligne : Books to Scrape_
+
 
 
 
@@ -21,7 +22,7 @@ Cette application permet de récupérer les informations suivantes de chaque liv
 
 L'application enregistre toutes ces données dans des fichiers .csv et les classe par catégorie de livres. Les images associées aux livres sont également téléchargées et classées dans le dossier de la catégorie concernée. 
 
-***
+
 ## Prérequis
 
 **Python** doit être préalablement installé.
@@ -41,7 +42,7 @@ Sinon, choisissez et téléchargez la version de Git qui correspond à votre ins
  <sub>Puis exécutez le fichier que vous venez de télécharger. Appuyez sur _Suivant_ à chaque fenêtre puis sur _Installer_. Lors de l’installation, laissez toutes les options par défaut, elles conviennent bien. 
 Git Bash est l’interface permettant d’utiliser Git en ligne de commande.
 
-***
+
 ## Installation
 
 1. Ouvrez le terminal et tapez :
@@ -56,14 +57,14 @@ $ git clone https://github.com/Nunespace/Projet2.git
 ```
 $ CD Projet2
 ou
-$ CD _chemin_ .../Projet2
+$ CD chemin .../Projet2
 ```
 
 3. Créez votre environnement virtuel : 
 
 ```
 python3 -m venv env 
-ou [^1]
+ou[^1]
 python -m venv env 
 ```
 
@@ -89,7 +90,7 @@ $ pip install -r requirements.txt
 
 ```
 $ python3 all_products.py
-ou [^1]
+ou
 $ python all_products.py
 ```
 
