@@ -1,7 +1,7 @@
 from product_informations import *
 
 # example d'url pour une catégorie de livre
-url_category_page1 = "http://books.toscrape.com/catalogue/category/books/science-fiction_16/index.html"
+url_category = "http://books.toscrape.com/catalogue/category/books/science-fiction_16/index.html"
 
 # Cette fonction crée une liste de dictionnaires contenant les informations de chaque livre de la catégorie: un dictionnaire par livre
 def extraction_info_category(url):
@@ -57,4 +57,4 @@ def load_file_category(url):
     creation_csv_file(file_category, list_info_one_category)
 
 #  pour exécuter la fonction : retirer le # de la ligne suivante
-# load_file_category(url_category_page1)
+#  load_file_category(url_category)
